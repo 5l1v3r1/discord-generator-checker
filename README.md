@@ -1,4 +1,4 @@
-# discord-nitro-gen-check
+# Tool Info
 Discord Nitro Code Generator + Checker
 
 # Usage
