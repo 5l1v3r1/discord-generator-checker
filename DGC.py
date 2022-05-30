@@ -1,68 +1,83 @@
-import random, string
-import webbrowser
-import time
-import requests
-import colorama
-from colorama import Fore, init
-colorama.init()
+import random, string, os, requests, threading
 
-print(f"""{Fore.RED}
-░██████╗░███████╗███╗░░██╗███████╗██████╗░░█████╗░████████╗░█████╗░██████╗░
-██╔════╝░██╔════╝████╗░██║██╔════╝██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██╔══██╗
-██║░░██╗░█████╗░░██╔██╗██║█████╗░░██████╔╝███████║░░░██║░░░██║░░██║██████╔╝
-██║░░╚██╗██╔══╝░░██║╚████║██╔══╝░░██╔══██╗██╔══██║░░░██║░░░██║░░██║██╔══██╗
-╚██████╔╝███████╗██║░╚███║███████╗██║░░██║██║░░██║░░░██║░░░╚█████╔╝██║░░██║
-░╚═════╝░╚══════╝╚═╝░░╚══╝╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝{Fore.BLUE}
-░░░░░░░░█████╗░██╗░░██╗███████╗░█████╗░██╗░░██╗███████╗██████╗░
-░░██╗░░██╔══██╗██║░░██║██╔════╝██╔══██╗██║░██╔╝██╔════╝██╔══██╗
-██████╗██║░░╚═╝███████║█████╗░░██║░░╚═╝█████═╝░█████╗░░██████╔╝
-╚═██╔═╝██║░░██╗██╔══██║██╔══╝░░██║░░██╗██╔═██╗░██╔══╝░░██╔══██╗
-░░╚═╝░░╚█████╔╝██║░░██║███████╗╚█████╔╝██║░╚██╗███████╗██║░░██║
-░░░░░░░░╚════╝░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝{Fore.RESET}""")
+THREADS = 8
 
-print()
-print(f"                   {Fore.RED}Creator {Fore.RESET}| {Fore.BLUE}Doop / 7uk{Fore.RESET}")
-print()
+class Colors:
+    """ Program Colors """
+    red = u"\u001b[31m"
+    green  = u"\u001b[32m"
+    reset  = u"\u001b[0m"
 
-print(f'[{Fore.BLUE}+{Fore.RESET}]{Fore.BLUE} Number of codes to GEN+CHECK{Fore.RESET}')
-num=input(' > ')
-print()
+c = Colors()
 
-f=open("Codes.txt","w", encoding='utf-8')
+class DGC(object):
 
-print(f"{Fore.RESET} [{Fore.BLUE}!{Fore.RESET}] {Fore.BLUE}Starting to generate + check...{Fore.RESET}")
-print()
+    def __init__(dgc):
+        dgc.checked = []
+        dgc.amt = input(' [?] Number of codes to Generate and Check -> ')
+        dgc.banner = f"""
+        {c.red}
+        ░██████╗░███████╗███╗░░██╗███████╗██████╗░░█████╗░████████╗░█████╗░██████╗░
+        ██╔════╝░██╔════╝████╗░██║██╔════╝██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██╔══██╗
+        ██║░░██╗░█████╗░░██╔██╗██║█████╗░░██████╔╝███████║░░░██║░░░██║░░██║██████╔╝
+        ██║░░╚██╗██╔══╝░░██║╚████║██╔══╝░░██╔══██╗██╔══██║░░░██║░░░██║░░██║██╔══██╗
+        ╚██████╔╝███████╗██║░╚███║███████╗██║░░██║██║░░██║░░░██║░░░╚█████╔╝██║░░██║
+        ░╚═════╝░╚══════╝╚═╝░░╚══╝╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝{c.green}
+        ░░░░░░░░█████╗░██╗░░██╗███████╗░█████╗░██╗░░██╗███████╗██████╗░
+        ░░██╗░░██╔══██╗██║░░██║██╔════╝██╔══██╗██║░██╔╝██╔════╝██╔══██╗
+        ██████╗██║░░╚═╝███████║█████╗░░██║░░╚═╝█████═╝░█████╗░░██████╔╝
+        ╚═██╔═╝██║░░██╗██╔══██║██╔══╝░░██║░░██╗██╔═██╗░██╔══╝░░██╔══██╗
+        ░░╚═╝░░╚█████╔╝██║░░██║███████╗╚█████╔╝██║░╚██╗███████╗██║░░██║
+        ░░░░░░░░╚════╝░╚═╝░░╚═╝╚══════╝░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝
+        {c.reset}
+        """
 
-for n in range(int(num)):
-   y = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(16))
-   f.write('https://discord.gift/')
-   f.write(y)
-   f.write("\n")
+        dgc.Menu()
 
-f.close()
+    @staticmethod
+    def StartThreads(func) -> None:
+        for i in range(THREADS):
+            thread = threading.Thread(target=func, args=[i])
+            thread.start()
 
+    def Menu(dgc) -> None:
+        os.system('cls')
+        print(dgc.banner)
+        dgc.Generate()
+        dgc.StartThreads(dgc.Checker)
+        print(f"[{c.red}!{c.reset}]{c.red} Finished Checking!")
 
-with open("Codes.txt") as f:
-    for line in f:
-        nitro = line.strip("\n")
+    def Generate(dgc):
+        print(f"{c.reset} [{c.red}!{c.reset}] {c.red}Generating...")
 
-        url = "https://discordapp.com/api/v6/entitlements/gift-codes/" + nitro + "?with_application=false&with_subscription_plan=true"
+        with open("Codes.txt","w", encoding='utf-8') as f:
+            for n in range(int(dgc.amt)):
+                y = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(16))
+                f.write(f'https://discord.gift/{y}\n')
+            f.close()
+        print(f"{c.reset} [{c.red}!{c.reset}] {c.red}Checking...")
 
-        r = requests.get(url)
+    def Checker(dgc, threadNum):
+        with open("Codes.txt") as f:
+            for line in f:
+                nitro = line.strip("\n")
+                if nitro in dgc.checked:
+                    continue
+                else:
+                    dgc.checked.append(nitro)
+                url = f"https://discordapp.com/api/v6/entitlements/gift-codes/{nitro}?with_application=false&with_subscription_plan=true"
+                r = requests.get(url)
+                
+                match r.status_code:
+                    case 200:
+                        with open('ValidCodes.txt') as valid:
+                            valid = f"{c.reset}[Thread {threadNum}] Valid | {c.green}" + " {}".format(line.strip("\n"))
+                            print(valid)
+                            f.write(f'VALID NITRO | https://discord.gift/{url}\n')
+                            break
+                    case _:
+                        print(f"{c.reset} [Thread {threadNum}] Invalid | {c.red}" + " {}".format(line.strip("\n")))
+            f.close()
 
-        if r.status_code == 200:
-            with open('ValidCodes.txt') as valid:
-                valid = f"{Fore.RESET} Valid | {Fore.GREEN}" + " {}".format(line.strip("\n"))
-                print(valid)
-                f.write('VALID NITRO | https://discord.gift/')
-                f.write(url)
-                f.write("\n")
-                break
-        else:
-        	print(f"{Fore.RESET} Invalid | {Fore.RED}" + " {}".format(line.strip("\n")))
-
-print()
-print(f"{Fore.RESET}[{Fore.BLUE}!{Fore.RESET}]{Fore.BLUE} Finished Checking! {Fore.RESET}")
-print()
-
-input(' Press any key to exit... ')
+Program = DGC()
+input('>> Press any key to exit... ')
