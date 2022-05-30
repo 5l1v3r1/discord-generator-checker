@@ -1,5 +1,11 @@
 # DGC 🌴
-DGC is a Discord Nitro Code Generator & Checker
+DGC is a Threaded Discord Nitro Code Generator & Checker
 
-# Tool 🍃
-Just enter the amount of codes you would like to generate, and DGC will Generate + Check that amount of codes.
+# Usage 🍃
+Simply enter the amount of codes you want to generate and check...
+
+# Images 🍃
+![image](https://user-images.githubusercontent.com/75194878/171067254-16101065-7609-4d0f-a5ab-443ec0a0dc20.png)
+
+![image](https://user-images.githubusercontent.com/75194878/171067239-44850d70-c6d5-4887-b189-d5962507b7dd.png)
+
